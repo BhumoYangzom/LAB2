@@ -1,0 +1,121 @@
+---
+title: "Lab2"
+author: "Yangzom Dolma"
+data: "09/04/2020"
+output: 
+  html_document: 
+    toc: yes
+    toc_float: yes 
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Tasks
+
+## Task 1
+
+```{r}
+getwd()
+```
+## Task 2
+
+```{r}
+epagas = read.csv("EPAGAS.csv")
+head(epagas, 6)
+```
+## Task 3
+
+Make the object mpg, the number of miles per gallon vector
+
+```{r}
+mpg = epagas$ï..MPG
+head(mpg)
+```
+Transform the mpg variable to z and verify these results.
+```{r}
+z= (mpg - mean(mpg))/sd(mpg)
+head(z)
+print(paste0("mean = ", round(mean(mpg), digits = 4)), quote = FALSE)
+print(paste0("variance = ", var(z)), quote = FALSE)
+print(paste0("standard deviation = ", sd(z)), quote = FALSE)
+```
+Using z, the values of mpg that are possible outliers are: 
+```{r}
+mpg[abs(z)>= 2 & abs(z) <= 3]
+```
+Using z, the values of mpg that is defined as outliers: 
+```{r}
+mpg[abs(z) > 3]
+```
+Dotplot using lattice package.
+```{r}
+mycol = ifelse(abs(z)>3, "Red",
+               ifelse(abs(z)>=2 &abs(z)<=3,"Blue", "Black")) 
+mypch = ifelse(abs(z)>3, 20,
+               ifelse(abs(z)>=2 &abs(z)<=3,21, 22))
+library(lattice)
+dotplot(mpg,col=mycol, main = "Plot of mpg values")
+```
+
+
+## Task 4
+
+```{r}
+boxplot(mpg, main = "Boxplot of mpg values", xlab = "MPG", col = "black", horizontal = TRUE, notch = TRUE)
+```
+Using Chebyshev's Theorem, at least 
+ 1 - 1/k^2 of the data lie within k standard deviations of the mean. 
+ 
+ When k = 2,
+
+```{r}
+k = 2
+chebval  = 1-1/(k^2)
+chebval
+```
+The exact proportion of data within 2 standard deviation of the mean: 
+```{r}
+exactProportion = length(mpg[abs(z) < 2])/length(mpg)
+exactProportion
+```
+
+In Chebyshev's Theorem, at least 8/9 of the data lie within 3 standard deviation of the mean. 
+```{r}
+k = 3
+chebval = 1- 1/(k^2)
+chebval
+```
+
+The exact proportion of data within 3 standard deviations of the mean: 
+```{r}
+exactProportion = length(mpg[abs(z)<3])/length(mpg)
+exactProportion
+```
+Does Chebyshev agree with the data?
+
+```{r}
+compare = length(mpg[mean(mpg)-2*sd(mpg) < mpg & mpg < mean(mpg)+ 2*sd(mpg) ])/length(mpg)
+compare
+```
+
+Yes, the value is approximately close to 8/9 of the data. Therefore, we can conclude that the Chebyshev agree with the data. 
+
+The Chebyshev correspond well with the Empirical rule when the standard deviation is 2. The prediction of the amount of data within 2 standard deviation of the mean is around 96%. 
+
+Therefore the Empirical Rule is quite valid in this case because the data is approximately bell-shaped. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
